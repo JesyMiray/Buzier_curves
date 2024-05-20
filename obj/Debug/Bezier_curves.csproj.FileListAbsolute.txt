@@ -1,0 +1,10 @@
+D:\PROJECTS\Bezier_curves\bin\Debug\Bezier_curves.exe.config
+D:\PROJECTS\Bezier_curves\bin\Debug\Bezier_curves.exe
+D:\PROJECTS\Bezier_curves\bin\Debug\Bezier_curves.pdb
+D:\PROJECTS\Bezier_curves\obj\Debug\Bezier_curves.csproj.AssemblyReference.cache
+D:\PROJECTS\Bezier_curves\obj\Debug\Bezier_curves.Form1.resources
+D:\PROJECTS\Bezier_curves\obj\Debug\Bezier_curves.Properties.Resources.resources
+D:\PROJECTS\Bezier_curves\obj\Debug\Bezier_curves.csproj.GenerateResource.cache
+D:\PROJECTS\Bezier_curves\obj\Debug\Bezier_curves.csproj.CoreCompileInputs.cache
+D:\PROJECTS\Bezier_curves\obj\Debug\Bezier_curves.exe
+D:\PROJECTS\Bezier_curves\obj\Debug\Bezier_curves.pdb
