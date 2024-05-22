@@ -7,9 +7,17 @@ namespace Bezier_curves
 {
     public partial class Form1 : Form
     {
+        public enum CurveType
+        {
+            Linear,
+            Quadratic,
+            Cubic
+        }
+
         public class BezierCurve
         {
             public List<PointF> Points { get; private set; }
+            public CurveType Type { get; set; }
 
             public BezierCurve()
             {
@@ -18,7 +26,10 @@ namespace Bezier_curves
 
             public void AddPoint(PointF point)
             {
-                Points.Add(point);
+                if (Points.Count < GetMaxPointsForCurveType())
+                {
+                    Points.Add(point);
+                }
             }
 
             public void MovePoint(int index, PointF newPosition)
@@ -26,6 +37,21 @@ namespace Bezier_curves
                 if (index >= 0 && index < Points.Count)
                 {
                     Points[index] = newPosition;
+                }
+            }
+
+            public int GetMaxPointsForCurveType()
+            {
+                switch (Type)
+                {
+                    case CurveType.Linear:
+                        return 2;
+                    case CurveType.Quadratic:
+                        return 3;
+                    case CurveType.Cubic:
+                        return 4;
+                    default:
+                        return 0;
                 }
             }
         }
@@ -39,6 +65,20 @@ namespace Bezier_curves
         public Form1()
         {
             InitializeComponent();
+            InitializeCurveTypeComboBox();
+        }
+
+        private void InitializeCurveTypeComboBox()
+        {
+            curveTypeComboBox.Items.AddRange(Enum.GetNames(typeof(CurveType)));
+            curveTypeComboBox.SelectedIndex = 0;
+            curveTypeComboBox.SelectedIndexChanged += CurveTypeComboBox_SelectedIndexChanged;
+        }
+
+        private void CurveTypeComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            currentCurve.Type = (CurveType)curveTypeComboBox.SelectedIndex;
+            pictureBox.Invalidate();
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -47,28 +87,18 @@ namespace Bezier_curves
             checkedListBox1.ItemCheck += checkedListBox1_ItemCheck;
             editButton.Click += editButton_Click;
             deleteButton.Click += deleteButton_Click;
+            addModeButton.Click += addModeButton_Click;
+            clearButton.Click += clearButton_Click;
         }
 
         private void pictureBox_Paint(object sender, PaintEventArgs e)
         {
             foreach (BezierCurve curve in bezierCurves)
             {
-                if (curve.Points.Count == 4)
-                {
-                    e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
-                    Pen curvePen = new Pen(curveColor, 2);
-                    e.Graphics.DrawBezier(curvePen, curve.Points[0], curve.Points[1], curve.Points[2], curve.Points[3]);
-                    curvePen.Dispose();
-                }
+                DrawBezierCurve(e, curve);
             }
 
-            if (currentCurve.Points.Count == 4)
-            {
-                e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
-                Pen curvePen = new Pen(Color.Blue, 2);
-                e.Graphics.DrawBezier(curvePen, currentCurve.Points[0], currentCurve.Points[1], currentCurve.Points[2], currentCurve.Points[3]);
-                curvePen.Dispose();
-            }
+            DrawBezierCurve(e, currentCurve);
 
             foreach (PointF point in currentCurve.Points)
             {
@@ -76,21 +106,66 @@ namespace Bezier_curves
             }
         }
 
+        private void DrawQuadraticBezier(Graphics g, Pen pen, PointF p0, PointF p1, PointF p2)
+        {
+            List<PointF> bezierPoints = new List<PointF>();
+            for (float t = 0; t <= 1; t += 0.01f)
+            {
+                float x = (1 - t) * (1 - t) * p0.X + 2 * (1 - t) * t * p1.X + t * t * p2.X;
+                float y = (1 - t) * (1 - t) * p0.Y + 2 * (1 - t) * t * p1.Y + t * t * p2.Y;
+                bezierPoints.Add(new PointF(x, y));
+            }
+            g.DrawLines(pen, bezierPoints.ToArray());
+        }
+
+        private void DrawBezierCurve(PaintEventArgs e, BezierCurve curve)
+        {
+            e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+            Pen curvePen = new Pen(curveColor, 2);
+
+            switch (curve.Type)
+            {
+                case CurveType.Linear:
+                    if (curve.Points.Count == 2)
+                    {
+                        e.Graphics.DrawLine(curvePen, curve.Points[0], curve.Points[1]);
+                    }
+                    break;
+                case CurveType.Quadratic:
+                    if (curve.Points.Count == 3)
+                    {
+                        DrawQuadraticBezier(e.Graphics, curvePen, curve.Points[0], curve.Points[1], curve.Points[2]);
+                    }
+                    break;
+                case CurveType.Cubic:
+                    if (curve.Points.Count == 4)
+                    {
+                        e.Graphics.DrawBezier(curvePen, curve.Points[0], curve.Points[1], curve.Points[2], curve.Points[3]);
+                    }
+                    break;
+            }
+
+            curvePen.Dispose();
+        }
+
         private void pictureBox_MouseDown(object sender, MouseEventArgs e)
         {
-            for (int i = 0; i < currentCurve.Points.Count; i++)
+            if (addingMode)
             {
-                if (Math.Abs(currentCurve.Points[i].X - e.X) < 4 && Math.Abs(currentCurve.Points[i].Y - e.Y) < 4)
+                for (int i = 0; i < currentCurve.Points.Count; i++)
                 {
-                    selectedPointIndex = i;
-                    break;
+                    if (Math.Abs(currentCurve.Points[i].X - e.X) < 4 && Math.Abs(currentCurve.Points[i].Y - e.Y) < 4)
+                    {
+                        selectedPointIndex = i;
+                        break;
+                    }
                 }
             }
         }
 
         private void pictureBox_MouseMove(object sender, MouseEventArgs e)
         {
-            if (selectedPointIndex != -1 && !addingMode)
+            if (addingMode && selectedPointIndex != -1)
             {
                 currentCurve.MovePoint(selectedPointIndex, new PointF(e.X, e.Y));
                 pictureBox.Invalidate();
@@ -99,41 +174,22 @@ namespace Bezier_curves
 
         private void pictureBox_MouseUp(object sender, MouseEventArgs e)
         {
-            if (selectedPointIndex != -1 && e.Button == MouseButtons.Left && !addingMode)
+            if (addingMode && selectedPointIndex != -1)
             {
                 selectedPointIndex = -1;
             }
-        }
-
-        private bool IsPointUnderMouse(Point mouseLocation)
-        {
-            foreach (PointF point in currentCurve.Points)
-            {
-                if (Math.Abs(point.X - mouseLocation.X) < 4 && Math.Abs(point.Y - mouseLocation.Y) < 4)
-                {
-                    return true;
-                }
-            }
-            return false;
         }
 
         private void pictureBox_MouseClick(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Left && addingMode)
             {
-                if (currentCurve.Points.Count == 4)
+                if (currentCurve.Points.Count < currentCurve.GetMaxPointsForCurveType())
                 {
-                    addModeButton_Click(sender, e);
-                    return;
+                    currentCurve.AddPoint(new PointF(e.X, e.Y));
+                    pictureBox.Invalidate();
                 }
-                currentCurve.AddPoint(new PointF(e.X, e.Y));
-                pictureBox.Invalidate();
             }
-            else if (e.Button == MouseButtons.Left && !addingMode)
-            {
-                return;
-            }
-
         }
 
         private void clearButton_Click(object sender, EventArgs e)
@@ -177,21 +233,10 @@ namespace Bezier_curves
         private void addModeButton_Click(object sender, EventArgs e)
         {
             addingMode = !addingMode;
-            if (!addingMode)
+            addModeButton.Text = addingMode ? "Finish" : "Add";
+            if (!addingMode && currentCurve.Points.Count > 0)
             {
-                addModeButton.Text = "Add";
-                if (currentCurve.Points.Count > 0 && currentCurve.Points.Count < 4)
-                {
-                    AddBezierCurve(currentCurve);
-                }
-            }
-            else
-            {
-                addModeButton.Text = "Finish";
-                if (currentCurve.Points.Count == 4)
-                {
-                    AddBezierCurve(currentCurve);
-                }
+                AddBezierCurve(currentCurve);
             }
         }
 
@@ -201,10 +246,8 @@ namespace Bezier_curves
             if (selectedIndex >= 0 && selectedIndex < bezierCurves.Count)
             {
                 currentCurve = bezierCurves[selectedIndex];
-
                 addingMode = true;
                 addModeButton.Text = "Finish";
-
                 pictureBox.Invalidate();
             }
         }
@@ -221,14 +264,11 @@ namespace Bezier_curves
         }
 
         private void UpdateCheckedListBox()
-        {   
-            // Очищаем список
+        {
             checkedListBox1.Items.Clear();
-
-            // Добавляем кривые в список
             for (int i = 0; i < bezierCurves.Count; i++)
             {
-                checkedListBox1.Items.Add($"Line {i + 1}");
+                checkedListBox1.Items.Add($"Curve {i + 1}");
             }
         }
     }

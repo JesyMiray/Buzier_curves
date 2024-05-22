@@ -35,6 +35,7 @@
             this.addModeButton = new System.Windows.Forms.Button();
             this.editButton = new System.Windows.Forms.Button();
             this.deleteButton = new System.Windows.Forms.Button();
+            this.curveTypeComboBox = new System.Windows.Forms.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).BeginInit();
             this.SuspendLayout();
             // 
@@ -43,7 +44,7 @@
             this.pictureBox.BackColor = System.Drawing.SystemColors.ButtonFace;
             this.pictureBox.Location = new System.Drawing.Point(12, 12);
             this.pictureBox.Name = "pictureBox";
-            this.pictureBox.Size = new System.Drawing.Size(1013, 666);
+            this.pictureBox.Size = new System.Drawing.Size(1180, 801);
             this.pictureBox.TabIndex = 0;
             this.pictureBox.TabStop = false;
             this.pictureBox.Paint += new System.Windows.Forms.PaintEventHandler(this.pictureBox_Paint);
@@ -54,7 +55,7 @@
             // 
             // clearButton
             // 
-            this.clearButton.Location = new System.Drawing.Point(1086, 605);
+            this.clearButton.Location = new System.Drawing.Point(1271, 587);
             this.clearButton.Name = "clearButton";
             this.clearButton.Size = new System.Drawing.Size(90, 41);
             this.clearButton.TabIndex = 1;
@@ -65,14 +66,14 @@
             // checkedListBox1
             // 
             this.checkedListBox1.FormattingEnabled = true;
-            this.checkedListBox1.Location = new System.Drawing.Point(1042, 55);
+            this.checkedListBox1.Location = new System.Drawing.Point(1222, 150);
             this.checkedListBox1.Name = "checkedListBox1";
             this.checkedListBox1.Size = new System.Drawing.Size(172, 259);
             this.checkedListBox1.TabIndex = 2;
             // 
             // addModeButton
             // 
-            this.addModeButton.Location = new System.Drawing.Point(1086, 429);
+            this.addModeButton.Location = new System.Drawing.Point(1220, 468);
             this.addModeButton.Name = "addModeButton";
             this.addModeButton.Size = new System.Drawing.Size(90, 37);
             this.addModeButton.TabIndex = 3;
@@ -82,7 +83,7 @@
             // 
             // editButton
             // 
-            this.editButton.Location = new System.Drawing.Point(1086, 488);
+            this.editButton.Location = new System.Drawing.Point(1316, 468);
             this.editButton.Name = "editButton";
             this.editButton.Size = new System.Drawing.Size(90, 37);
             this.editButton.TabIndex = 4;
@@ -92,7 +93,7 @@
             // 
             // deleteButton
             // 
-            this.deleteButton.Location = new System.Drawing.Point(1086, 551);
+            this.deleteButton.Location = new System.Drawing.Point(1271, 511);
             this.deleteButton.Name = "deleteButton";
             this.deleteButton.Size = new System.Drawing.Size(90, 37);
             this.deleteButton.TabIndex = 5;
@@ -100,12 +101,21 @@
             this.deleteButton.UseVisualStyleBackColor = true;
             this.deleteButton.Click += new System.EventHandler(this.deleteButton_Click);
             // 
+            // curveTypeComboBox
+            // 
+            this.curveTypeComboBox.FormattingEnabled = true;
+            this.curveTypeComboBox.Location = new System.Drawing.Point(1252, 427);
+            this.curveTypeComboBox.Name = "curveTypeComboBox";
+            this.curveTypeComboBox.Size = new System.Drawing.Size(121, 24);
+            this.curveTypeComboBox.TabIndex = 6;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ControlDark;
-            this.ClientSize = new System.Drawing.Size(1226, 690);
+            this.ClientSize = new System.Drawing.Size(1421, 825);
+            this.Controls.Add(this.curveTypeComboBox);
             this.Controls.Add(this.deleteButton);
             this.Controls.Add(this.editButton);
             this.Controls.Add(this.addModeButton);
@@ -128,6 +138,7 @@
         private System.Windows.Forms.Button addModeButton;
         private System.Windows.Forms.Button editButton;
         private System.Windows.Forms.Button deleteButton;
+        private System.Windows.Forms.ComboBox curveTypeComboBox;
     }
 }
 
